@@ -1,0 +1,130 @@
+
+from docx import Document
+from docx.shared import Inches
+
+import tkinter as tk
+from tkinter import ttk
+from tkinter import Text
+import speech_recognition as sr
+import tkinter as tk
+from PIL import ImageTk, Image
+import sys;
+import time
+from tkinter import messagebox
+
+text_used="Default"
+
+ts = time.time()
+
+def action():
+    if len(sys.argv)==2:
+        filename = sys.argv[1];
+        with sr.AudioFile(filename) as source:
+            audio=r.listen(source);
+    else:
+            with sr.Microphone() as source:
+                audio=r.listen(source);
+                try:
+                    print("Initiating----")
+                    global text_used
+                    text_used= r.recognize_google(audio,language='en')
+                    t1.insert(tk.END,text_used)
+                    text_used=t1.get
+                    
+                    
+                    print("Start Writing---")
+                    print("Doneyyyy---")
+                except Exception as e:
+                    pass
+
+def action_quit():
+    win.destroy()
+
+def clear_text(self):
+     self.t1.delete("1.0", "end")    
+    
+
+
+def write_doc():
+    document = Document()
+    document.add_heading('Basics KT document', 0)
+    
+    p = document.add_paragraph('A plain paragraph having some ')
+    p.add_run('bold').bold = True
+    p.add_run(' and some ')
+    p.add_run('italic.').italic = True
+    
+    document.add_heading('Heading, level 1', level=1)
+    document.add_paragraph('Intense quote', style='Intense Quote')
+    
+    document.add_paragraph(
+        text_used, style='List Bullet'
+    )
+    document.add_paragraph(
+        'first item in ordered list', style='List Number'
+    )
+    
+    #document.add_picture('monty-truth.png', width=Inches(1.25))
+    
+    records = (
+        (3, '101', 'Spam'),
+        (7, '422', 'Eggs'),
+        (4, '631', 'Spam, spam, eggs, and spam')
+    )
+    
+    table = document.add_table(rows=1, cols=3)
+    hdr_cells = table.rows[0].cells
+    hdr_cells[0].text = 'Qty'
+    hdr_cells[1].text = 'Id'
+    hdr_cells[2].text = 'Desc'
+    for qty, id, desc in records:
+        row_cells = table.add_row().cells
+        row_cells[0].text = str(qty)
+        row_cells[1].text = id
+        row_cells[2].text = desc
+    
+    document.add_page_break()
+    timestamp =datetime.datetime.fromtimestamp(ts).strftime('%Y_%m_%d_%H_%M_%S')
+    document.save("C:\\Users\\Hp\\Desktop\\Deep_learning\\KT_" + timestamp+ ".docx")
+    print("--Finish--")
+    messagebox.showinfo("KT", "KT Doc Written")
+
+    
+
+# Windows
+win=tk.Tk()
+win.title('OGS Speech to Text')
+win.geometry("700x550") #Width x Heigh
+r=sr.Recognizer();
+
+
+#Test Box
+T = tk.Text(win, height=1, width=5)
+T.pack(padx=1, pady=1, side=tk.TOP)
+T.insert(tk.END, "Optum")
+
+
+
+  
+#button
+buttton_STT=ttk.Button(win,text='Go aHead',command= action)
+buttton_STT.pack(padx=10, pady=10, side=tk.TOP)
+
+
+buttton_STT=ttk.Button(win,text='Clear!',command= clear_text)
+buttton_STT.pack(padx=10, pady=10, side=tk.TOP)
+
+buttuon_quit=ttk.Button(win,text='Bye!',command= action_quit)
+buttuon_quit.pack(padx=10, pady=20, side=tk.TOP)
+
+buttton_STT=ttk.Button(win,text='Save!',command= write_doc)
+buttton_STT.pack(padx=10, pady=10, side=tk.BOTTOM)
+
+#Test Box
+t1 = tk.Text(win, height=30, width=80)
+t1.pack(padx=10, pady=20, side=tk.BOTTOM)
+
+
+
+win.mainloop()
+
