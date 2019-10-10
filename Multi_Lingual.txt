@@ -1,0 +1,131 @@
+import tkinter as tk
+from tkinter import ttk
+from tkinter import Text
+from tkinter import *
+import speech_recognition as sr
+import tkinter as tk
+from PIL import ImageTk, Image
+import sys;
+from googletrans import Translator
+translator = Translator()
+from gtts import gTTS
+import os
+import datetime
+from playsound import playsound
+import time
+
+ts = time.time()
+
+
+
+
+#Variables
+#master = Tk()
+
+selection="Default"
+selection1="Default1"
+
+def callback(select2):
+    global selection
+    selection=select2.split(':')
+    selection=selection[0]
+    print(selection)
+
+def callback1(select1):
+    global selection1
+    selection1=select1.split(':')
+    selection1=selection1[0]
+    print(selection1)
+
+def action():
+    if len(sys.argv)==2:
+        print("Started1")
+        filename = sys.argv[1];
+        with sr.AudioFile(filename) as source:
+            audio=r.listen(source);
+    else:
+            with sr.Microphone() as source:
+                audio=r.listen(source);
+                try:
+                    # t1.insert(tk.END, r.recognize_google(audio,language='hi-IN'))
+                    print("xxx--"+selection)
+                    t1.insert(tk.END, r.recognize_google(audio,language=selection))
+                   
+                    
+                    
+                except Exception as e:
+                    pass
+
+def action_quit():
+    win.destroy()
+    
+def Translate_Lang():
+    text_to_translate=t1.get("1.0","end-1c")
+    translations = translator.translate([text_to_translate], dest=selection1)
+    for translation in translations:
+        t2.insert(tk.END, translation.text)
+        
+def Speak(): 
+    print("Done --", ' -> ', t2.get("1.0","end-1c"))       
+    tts_hindi=gTTS(text=t2.get("1.0","end-1c"), lang=selection1)
+    timestamp =datetime.datetime.fromtimestamp(ts).strftime('%Y_%m_%d_%H_%M_%S')
+    Audio_name = "Good1_"+timestamp+".mp3"
+    print(Audio_name)
+    #Audio_name = "Good2.mp3"
+    tts_hindi.save("C:\\Users\\Hp\\Desktop\\Deep_learning\\"+ Audio_name)
+    playsound("C:\\Users\\Hp\\Desktop\\Deep_learning\\"+ Audio_name)
+    
+
+# Windows
+win=tk.Tk()
+win.title('Optum--Multi Lingual Translator_version1')
+win.geometry("970x700")
+#win.geometry("690x450") #Width x Heigh
+r=sr.Recognizer();
+
+
+#Test Box
+T = tk.Text(win, height=1, width=5)
+T.pack(padx=1, pady=1, side=tk.TOP)
+T.insert(tk.END, "Optum")
+
+
+
+  
+#button
+buttton_STT=ttk.Button(win,text='Go aHead',command= action)
+buttton_STT.pack(padx=10, pady=10, side=tk.TOP)
+
+button_translate=ttk.Button(win,text='Translate',command=Translate_Lang)
+button_translate.pack(padx=10, pady=20, side=tk.TOP)
+
+buttuon_quit=ttk.Button(win,text='Bye',command= action_quit)
+buttuon_quit.pack(padx=10, pady=20, side=tk.TOP)
+
+
+buttuon_Speak=ttk.Button(win,text='Say',command= Speak)
+buttuon_Speak.pack(padx=10, pady=20, side=tk.BOTTOM)
+variable = tk.StringVar(win)
+variable.set("Language From") # default value
+
+w = OptionMenu(win, variable, "tl: Filipino", "hi: Hindi", "en: English", command=callback)
+w.pack(padx=10, pady=20, side=tk.LEFT)
+
+variable1 = tk.StringVar(win)
+variable1.set("Language To") # default value
+
+x = OptionMenu(win, variable1, "tl: Filipino", "hi: Hindi", "en: English", command=callback1)
+x.pack(padx=10, pady=20, side=tk.LEFT)
+
+
+#Test Box
+t1 = tk.Text(win, height=20, width=40)
+t1.pack(padx=10, pady=20, side=tk.LEFT)
+
+t2 = tk.Text(win, height=20, width=40)
+t2.pack(padx=10, pady=20, side=tk.LEFT)
+
+
+
+
+win.mainloop()
